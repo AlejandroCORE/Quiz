@@ -1,19 +1,46 @@
 var models = require('../models');
 
-// GET /quizzes
+// GET /quizzes.:format?
 exports.index = function(req, res, next) {
-	models.Quiz.findAll()
-		.then(function(quizzes) {
-			res.render('quizzes/index.ejs', { quizzes: quizzes});
+	if(req.params.format === 'json'){
+		models.Quiz.findAll()
+			.then(function(quizzes) {
+				res.render('quizzes/index2.ejs', { quizzes: quizzes});
+			})
+			.catch(function(error) {
+				next(error);
+		});
+	}
+	else{
+		models.Quiz.findAll()
+			.then(function(quizzes) {
+				res.render('quizzes/index.ejs', { quizzes: quizzes});
+			})
+			.catch(function(error) {
+				next(error);
+		});
+	}
+};
+
+
+// GET /quizzes/:id.:format?
+exports.show = function(req, res, next) {
+	if(req.params.format === 'json'){
+		models.Quiz.findById(req.params.quizId)
+		.then(function(quiz) {
+			if (quiz) {
+				var answer = req.query.answer || '';
+
+				res.render('quizzes/show2', {quiz: quiz,
+											answer: answer});
+			} else {
+		    	throw new Error('No existe ese quiz en la BBDD.');
+		    }
 		})
 		.catch(function(error) {
 			next(error);
 		});
-};
-
-
-// GET /quizzes/:id
-exports.show = function(req, res, next) {
+	}else{
 	models.Quiz.findById(req.params.quizId)
 		.then(function(quiz) {
 			if (quiz) {
@@ -28,11 +55,13 @@ exports.show = function(req, res, next) {
 		.catch(function(error) {
 			next(error);
 		});
+	}
 };
 
 
 // GET /quizzes/:id/check
 exports.check = function(req, res) {
+
 	models.Quiz.findById(req.params.quizId)
 		.then(function(quiz) {
 			if (quiz) {
@@ -49,7 +78,8 @@ exports.check = function(req, res) {
 		})
 		.catch(function(error) {
 			next(error);
-		});	
+		});
+
 };
 
 // GET /author

@@ -1,0 +1,8 @@
+<p>
+[
+<% for (var i in quizzes) { %>
+	{
+	"id": <%= i %>, "Pregunta":	<%= quizzes[i].question %>, "Respuesta": <%= quizzes[i].answer %>
+	}, 
+<% } %>
+]
